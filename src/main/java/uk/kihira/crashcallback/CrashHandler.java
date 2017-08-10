@@ -16,7 +16,7 @@ import java.util.Optional;
 public class CrashHandler implements ICrashCallable {
     @Override
     public String getLabel() {
-        return "zzz-crashcallback";
+        return "crashcallback";
     }
 
     @Override
