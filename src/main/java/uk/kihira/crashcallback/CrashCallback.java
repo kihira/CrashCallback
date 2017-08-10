@@ -17,20 +17,21 @@ public class CrashCallback {
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent e) {
+        // Load configuration data first
         Configuration config = new Configuration(e.getSuggestedConfigurationFile());
         callbackUrl = config.getString("Callback", Configuration.CATEGORY_GENERAL, "", "The URL that is GET on crash");
         expectedResponse = config.getInt("Response Code", Configuration.CATEGORY_GENERAL, 200, 0, 1000, "Expected HTTP response code from callback");
+        config.save();
+
+        // Load from command line (overrides config options)
+        callbackUrl = System.getProperty("cc.callback", callbackUrl);
+        expectedResponse = Integer.parseInt(System.getProperty("cc.response", String.valueOf(expectedResponse)));
 
         if (StringUtils.isNullOrEmpty(callbackUrl)) {
             logger.error("No callback URL is set!");
             return;
         }
 
-        // todo version check? MinecraftForge.MC_VERSION
         FMLCommonHandler.instance().registerCrashCallable(new CrashHandler());
-    }
-
-    public void onServerStart(FMLServerStartedEvent e) {
-        throw new RuntimeException("Oh noes!");
     }
 }
